@@ -1,0 +1,158 @@
+:root {
+  --rosa-principal: #ff5fa2;
+  --rosa-claro: #ffe5f0;
+  --rosa-medio: #ff9cc7;
+  --rosa-escuro: #cc3f7d;
+  --texto: #4d2142;
+  --branco: #ffffff;
+}
+
+body {
+  background: #fff7fb;
+  font-family: Arial, sans-serif;
+  color: var(--texto);
+}
+
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.logo-text {
+  margin: 0;
+  font-weight: bold;
+  color: var(--rosa-escuro) !important;
+}
+
+.logo-subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+.nav-link {
+  color: var(--texto) !important;
+  margin-left: 15px;
+  font-weight: 600;
+}
+
+.nav-link.active {
+  color: var(--rosa-principal) !important;
+}
+
+.hero-section {
+  padding: 80px 0;
+}
+
+.hero-title {
+  font-size: 64px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.hero-text {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #666;
+}
+
+.hero-buttons {
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+}
+
+.btn-pink {
+  background: var(--rosa-principal) !important;
+  color: white;
+  border-radius: 12px;
+  padding: 12px 24px;
+  border: none;
+  font-weight: bold;
+}
+
+.btn-pink:hover {
+  background: var(--rosa-escuro) !important;
+  color: white;
+}
+
+.btn-outline-pink {
+  border: 2px solid var(--rosa-principal) !important;
+  color: var(--rosa-principal) !important;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: bold;
+}
+
+.lock-cat {
+  width: 300px;
+  height: 300px;
+  padding-left: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cats-section {
+  padding: 60px 0;
+}
+
+.section-title {
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+.card-gato {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+
+  transition: 0.3s;
+}
+
+.card-gato:hover {
+  transform: translateY(-5px);
+}
+
+.card-gato img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.card-body-custom {
+  padding: 20px;
+}
+
+.gato-nome {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.gato-info {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.footer {
+  margin-top: 80px;
+  padding: 40px 0;
+
+  background: white;
+  text-align: center;
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>GatoLock</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 py-3">
+    <div class="container">
+
+      <a class="navbar-brand logo-area" href="#">
+        <div class="logo-icon">
+          <img src="assets\imagens\logo.png" alt="Cadeado gato" class="logo-img">
+        </div>
+
+        <div>
+          <h2 class="logo-text">GatoLock</h2>
+          <span class="logo-subtitle">Adoção começa com cuidado.</span>
+        </div>
+      </a>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Início</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#gatos">Gatinhos</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#">Sobre</a>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+
+
+  <section class="hero-section">
+    <div class="container">
+
+      <div class="row align-items-center">
+
+        <div class="col-lg-6">
+
+          <h1 class="hero-title">
+            Trave o amor.
+            <br>
+            Liberte a felicidade.
+          </h1>
+
+          <p class="hero-text">
+            No GatoLock, cada pedido de adoção é tratado
+            com carinho e responsabilidade.
+          </p>
+
+          <div class="hero-buttons">
+            <button class="btn btn-pink">
+              <i class="fa-solid fa-paw"></i>
+              Ver gatinhos
+            </button>
+
+            <button class="btn btn-outline-pink">
+              Como funciona
+            </button>
+          </div>
+
+        </div>
+
+        <div class="col-lg-6 text-center">
+
+          <div class="lock-cat">
+            <img src="assets\imagens\logo.png" alt="Cadeado gato">
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+ 
+  <section id="gatos" class="cats-section">
+
+    <div class="container">
+
+      <h2 class="section-title">
+        <i class="fa-solid fa-paw"></i>
+        Gatinhos disponíveis
+      </h2>
+
+      <div id="lista-gatos" class="row"></div>
+
+    </div>
+
+  </section>
+
+
+  <div class="modal fade" id="modalAdocao" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">
+            Entrar na fila de adoção 🐾
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal">
+          </button>
+        </div>
+
+        <div class="modal-body">
+
+          <form>
+
+            <div class="mb-3">
+              <label class="form-label">Seu nome</label>
+
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Ex: Maria Silva"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">E-mail</label>
+
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Ex: maria@email.com"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">
+                Por que deseja adotar?
+              </label>
+
+              <textarea
+                class="form-control"
+                rows="3">
+              </textarea>
+            </div>
+
+          </form>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary">
+            Cancelar
+          </button>
+
+          <button class="btn btn-pink">
+            Confirmar 🐾
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <footer class="footer">
+
+    <div class="container">
+
+      <h3>🐾 GatoLock</h3>
+
+      <p>
+        Sistema distribuído de adoção de gatinhos.
+      </p>
+
+    </div>
+
+  </footer>
+
+  <script src="app.js"></script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+</body>
+</html>
