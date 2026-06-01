@@ -132,12 +132,13 @@
 
         <div class="modal-body">
 
-          <form>
+          <form id="form-adocao">
 
             <div class="mb-3">
               <label class="form-label">Seu nome</label>
 
               <input
+                id="nome-adotante"
                 type="text"
                 class="form-control"
                 placeholder="Ex: Maria Silva"
@@ -154,12 +155,18 @@
               />
             </div>
 
+            <input
+              type="hidden"
+              id="nome-gato"
+            />
+
             <div class="mb-3">
               <label class="form-label">
                 Por que deseja adotar?
               </label>
 
               <textarea
+                id="texto-adocao"
                 class="form-control"
                 rows="3">
               </textarea>
@@ -174,7 +181,10 @@
             Cancelar
           </button>
 
-          <button class="btn btn-pink">
+          <button
+            type="submit"
+            form="form-adocao"
+            class="btn btn-pink">
             Confirmar 🐾
           </button>
         </div>
@@ -183,6 +193,19 @@
     </div>
   </div>
 
+  <section class="container my-5">
+
+  <h2 class="section-title">
+    Solicitações Recebidas
+  </h2>
+
+  <div id="lista-mensagens">
+
+    <p>Nenhuma solicitação encontrada.</p>
+
+  </div>
+
+  </section>
 
   <footer class="footer">
 
