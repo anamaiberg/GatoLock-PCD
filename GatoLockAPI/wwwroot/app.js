@@ -75,28 +75,3 @@ function renderizarGatos() {
 }
 
 renderizarGatos();
-
-
-async function testarServidor() {
-
-    try {
-
-        const resposta =
-            await fetch("/api/status");
-
-        const mensagem =
-            await resposta.text();
-
-        console.log(mensagem);
-
-        document.getElementById("status-servidor")
-            .innerText = mensagem;
-
-    } catch {
-
-        document.getElementById("status-servidor")
-            .innerText = "Servidor indisponível";
-    }
-}
-
-testarServidor();
