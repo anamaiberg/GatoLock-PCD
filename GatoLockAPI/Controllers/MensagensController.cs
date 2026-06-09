@@ -9,11 +9,14 @@ namespace GatoLockAPI.Controllers;
 public class MensagensController : ControllerBase
 {
     private readonly MensagemService _service;
+    private readonly SolicitacoesQueueService _fila;
 
     public MensagensController(
-        MensagemService service)
+        MensagemService service,
+        SolicitacoesQueueService fila)
     {
         _service = service;
+        _fila = fila;
     }
 
     [HttpGet]
@@ -24,16 +27,24 @@ public class MensagensController : ControllerBase
         );
     }
 
+    [HttpGet("fila")]
+    public IActionResult Fila()
+    {
+        return Ok(_fila.ObterFilaAtual());
+    }
+
     [HttpPost]
     public IActionResult Post(
         [FromBody] Mensagem mensagem)
     {
-        _service.Adicionar(mensagem);
+        var solicitacao = _service.Adicionar(mensagem);
 
-        return Ok(new
+        return Accepted(new
         {
             sucesso = true,
-            mensagem = "Mensagem cadastrada!"
+            mensagem = "Mensagem enfileirada!",
+            id = solicitacao.Id,
+            status = solicitacao.Status.ToString()
         });
     }
 }

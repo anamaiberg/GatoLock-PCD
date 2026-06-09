@@ -4,17 +4,47 @@ namespace GatoLockAPI.Services;
 
 public class MensagemService
 {
-    private readonly List<Mensagem> _mensagens = new();
+    private readonly List<Mensagem> _mensagensConcluidas = new();
+    private readonly object _lock = new();
+    private readonly SolicitacoesQueueService _fila;
+
+    public MensagemService(SolicitacoesQueueService fila)
+    {
+        _fila = fila;
+    }
 
     public List<Mensagem> ObterTodas()
     {
-        return _mensagens;
+        lock (_lock)
+        {
+            return _mensagensConcluidas
+                .Select(mensagem => new Mensagem
+                {
+                    Id = mensagem.Id,
+                    NomeAdotante = mensagem.NomeAdotante,
+                    NomeGato = mensagem.NomeGato,
+                    Texto = mensagem.Texto
+                })
+                .ToList();
+        }
     }
 
-    public void Adicionar(Mensagem mensagem)
+    public SolicitacaoAdocao Adicionar(Mensagem mensagem)
     {
-        mensagem.Id = _mensagens.Count + 1;
+        return _fila.Enfileirar(mensagem);
+    }
 
-        _mensagens.Add(mensagem);
+    public void RegistrarConcluida(SolicitacaoAdocao solicitacao)
+    {
+        lock (_lock)
+        {
+            _mensagensConcluidas.Add(new Mensagem
+            {
+                Id = solicitacao.Id,
+                NomeAdotante = solicitacao.NomeAdotante,
+                NomeGato = solicitacao.NomeGato,
+                Texto = solicitacao.Texto
+            });
+        }
     }
 }

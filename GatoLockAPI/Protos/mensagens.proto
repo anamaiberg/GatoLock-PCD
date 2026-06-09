@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option csharp_namespace = "GatoLockAPI";
+
+import "google/protobuf/empty.proto";
+
+package mensagens;
+
+message MensagemDto {
+  int32 id = 1;
+  string nome_adotante = 2;
+  string nome_gato = 3;
+  string texto = 4;
+}
+
+message MensagemRequest {
+  string nome_adotante = 1;
+  string nome_gato = 2;
+  string texto = 3;
+}
+
+message ListaMensagensResponse {
+  repeated MensagemDto mensagens = 1;
+}
+
+message OperacaoResponse {
+  bool sucesso = 1;
+  string mensagem = 2;
+}
+
+service MensagensGrpc {
+  rpc ObterTodas (google.protobuf.Empty) returns (ListaMensagensResponse);
+  rpc Adicionar (MensagemRequest) returns (OperacaoResponse);
+}
