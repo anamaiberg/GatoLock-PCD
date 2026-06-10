@@ -22,8 +22,7 @@ const gatos = [
   }
 ];
 
-const listaGatos =
-  document.getElementById("lista-gatos");
+const listaGatos = document.getElementById("lista-gatos");
 
 let gatoSelecionado = "";
 
@@ -125,89 +124,285 @@ form.addEventListener(
         ).value
     };
 
-    const resposta =
-      await fetch(
-        "/api/mensagens",
-        {
-          method: "POST",
+    try {
 
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
+      const resposta =
+        await fetch(
+          "/api/mensagens",
+          {
+            method: "POST",
 
-          body:
-            JSON.stringify(
-              dados
-            )
-        }
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                dados
+              )
+          }
+        );
+
+      const json =
+        await resposta.json();
+
+
+
+      carregarFila();
+
+      form.reset();
+
+      const modal =
+        bootstrap.Modal.getInstance(
+          document.getElementById(
+            "modalAdocao"
+          )
+        );
+
+      if (modal) {
+        modal.hide();
+      }
+
+      carregarFila();
+
+    } catch (erro) {
+
+      console.error(
+        erro
       );
 
-    const json =
-      await resposta.json();
-
-    alert(
-      json.mensagem
-    );
-
-    carregarMensagens();
-
-    form.reset();
+      alert(
+        "Erro ao enviar solicitação."
+      );
+    }
   }
 );
 
-async function carregarMensagens() {
+async function carregarFila() {
 
-  const resposta =
-    await fetch(
-      "/api/mensagens"
-    );
+  try {
 
-  const mensagens =
-    await resposta.json();
+    const resposta =
+      await fetch(
+        "/api/mensagens/fila"
+      );
 
-  const lista =
-    document.getElementById(
-      "lista-mensagens"
-    );
+    const fila =
+      await resposta.json();
 
-  if (
-    mensagens.length === 0
-  ) {
+    const container =
+      document.getElementById(
+        "fila-adocao"
+      );
 
-    lista.innerHTML =
-      "<p>Nenhuma solicitação encontrada.</p>";
+    if (!container) {
+      return;
+    }
 
-    return;
-  }
+    if (fila.length === 0) {
 
-  lista.innerHTML = "";
+      container.innerHTML =
+        "<p>Nenhuma solicitação na fila.</p>";
 
-  mensagens.forEach(
-    mensagem => {
+      return;
+    }
 
-      lista.innerHTML += `
+    container.innerHTML = "";
+
+    fila.forEach(item => {
+
+      container.innerHTML += `
         <div class="card p-3 mb-3">
 
           <strong>
-            ${mensagem.nomeAdotante}
+            #${item.id}
           </strong>
 
-          deseja adotar
+          <br>
 
-          <strong>
-            ${mensagem.nomeGato}
-          </strong>
+          👤 ${item.nomeAdotante}
 
-          <p class="mt-2 mb-0">
-            ${mensagem.texto}
-          </p>
+          <br>
+
+          🐱 ${item.nomeGato}
+
+          <br>
+
+          ⏳ Status:
+          ${item.status}
 
         </div>
       `;
-    }
-  );
+    });
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar fila:",
+      erro
+    );
+  }
 }
 
+async function carregarMensagens() {
+
+  try {
+
+    const resposta =
+      await fetch(
+        "/api/mensagens"
+      );
+
+    const mensagens =
+      await resposta.json();
+
+    const lista =
+      document.getElementById(
+        "lista-mensagens"
+      );
+
+    if (!lista) {
+      return;
+    }
+
+    if (
+      mensagens.length === 0
+    ) {
+
+      lista.innerHTML =
+        "<p>Nenhuma solicitação processada.</p>";
+
+      return;
+    }
+
+    lista.innerHTML = "";
+
+    mensagens.forEach(
+      mensagem => {
+
+        lista.innerHTML += `
+          <div class="card p-3 mb-3">
+
+            <strong>
+              ${mensagem.nomeAdotante}
+            </strong>
+
+            deseja adotar
+
+            <strong>
+              ${mensagem.nomeGato}
+            </strong>
+
+            <p class="mt-2 mb-0">
+              ${mensagem.texto}
+            </p>
+
+            <span class="badge bg-success mt-2">
+              Processada
+            </span>
+
+          </div>
+        `;
+      }
+    );
+
+  } catch (erro) {
+
+    console.error(
+      "Erro ao carregar mensagens:",
+      erro
+    );
+  }
+}
+
+/* ===========================
+   SIGNALR
+=========================== */
+
+const connection =
+  new signalR
+    .HubConnectionBuilder()
+    .withUrl("/hubs/solicitacoes")
+    .build();
+
+connection.on(
+  "filaAtualizada",
+  () => {
+
+    carregarFila();
+  }
+);
+
+connection.on(
+  "solicitacaoProcessando",
+  (solicitacao) => {
+
+    const container =
+      document.getElementById(
+        "solicitacao-processando"
+      );
+
+    container.innerHTML = `
+      <div class="card p-3 border-warning">
+
+        <h5>
+          ⏳ Processando Solicitação
+        </h5>
+
+        <strong>
+          ${solicitacao.nomeAdotante}
+        </strong>
+
+        deseja adotar
+
+        <strong>
+          ${solicitacao.nomeGato}
+        </strong>
+
+        <p class="mt-2 mb-0">
+          ${solicitacao.texto}
+        </p>
+
+      </div>
+    `;
+
+    carregarFila();
+  }
+);
+
+connection.on(
+  "solicitacaoConcluida",
+  () => {
+
+    document.getElementById(
+      "solicitacao-processando"
+    ).innerHTML =
+      "<p>Nenhuma solicitação sendo processada.</p>";
+
+    carregarFila();
+
+    carregarMensagens();
+  }
+);
+
+connection
+  .start()
+  .then(() => {
+
+    console.log(
+      "SignalR conectado!"
+    );
+
+  })
+  .catch(console.error);
+
+/* ===========================
+   INICIALIZAÇÃO
+=========================== */
+
 renderizarGatos();
+
+carregarFila();
+
 carregarMensagens();
