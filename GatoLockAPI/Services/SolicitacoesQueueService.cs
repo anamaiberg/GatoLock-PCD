@@ -5,7 +5,7 @@ namespace GatoLockAPI.Services;
 
 public class SolicitacoesQueueService
 {
-    private readonly object _lock = new();
+    private readonly Mutex _mutex = new();
     private readonly Channel<SolicitacaoAdocao> _fila = Channel.CreateUnbounded<SolicitacaoAdocao>();
     private readonly List<SolicitacaoAdocao> _emEspera = new();
     private readonly List<SolicitacaoAdocao> _processadas = new();
@@ -15,71 +15,93 @@ public class SolicitacoesQueueService
 
     public SolicitacaoAdocao Enfileirar(Mensagem mensagem)
     {
-        var solicitacao = new SolicitacaoAdocao
-        {
-            Id = ProximoId(),
-            NomeAdotante = mensagem.NomeAdotante,
-            NomeGato = mensagem.NomeGato,
-            Texto = mensagem.Texto,
-            Status = SolicitacaoStatus.NaFila,
-            CriadaEm = DateTime.UtcNow
-        };
+        _mutex.WaitOne();
 
-        lock (_lock)
+        try
         {
+            var solicitacao = new SolicitacaoAdocao
+            {
+                Id = _proximoId++,
+                NomeAdotante = mensagem.NomeAdotante,
+                NomeGato = mensagem.NomeGato,
+                Texto = mensagem.Texto,
+                Status = SolicitacaoStatus.NaFila,
+                CriadaEm = DateTime.UtcNow
+            };
+
             _emEspera.Add(solicitacao);
+
+            _fila.Writer.TryWrite(solicitacao);
+
+            return solicitacao;
         }
-
-        _fila.Writer.TryWrite(solicitacao);
-
-        return solicitacao;
+        finally
+        {
+            _mutex.ReleaseMutex();
+        }
     }
 
     public void MarcarProcessando(SolicitacaoAdocao solicitacao)
     {
-        lock (_lock)
+        _mutex.WaitOne();
+
+        try
         {
             solicitacao.Status = SolicitacaoStatus.Processando;
 
             _emEspera.RemoveAll(item => item.Id == solicitacao.Id);
         }
+        finally
+        {
+            _mutex.ReleaseMutex();
+        }
     }
 
     public void Concluir(SolicitacaoAdocao solicitacao)
     {
-        lock (_lock)
+        _mutex.WaitOne();
+
+        try
         {
             solicitacao.Status = SolicitacaoStatus.Concluida;
             solicitacao.ProcessadaEm = DateTime.UtcNow;
             _processadas.Insert(0, solicitacao);
         }
+        finally
+        {
+            _mutex.ReleaseMutex();
+        }
     }
 
     public List<SolicitacaoAdocao> ObterProcessadas()
     {
-        lock (_lock)
+        _mutex.WaitOne();
+
+        try
         {
             return _processadas
                 .Select(Clone)
                 .ToList();
         }
+        finally
+        {
+            _mutex.ReleaseMutex();
+        }
     }
 
     public List<SolicitacaoAdocao> ObterFilaAtual()
     {
-        lock (_lock)
+        _mutex.WaitOne();
+
+        try
         {
             return _emEspera
                 .Select(Clone)
                 .ToList();
         }
-    }
-
-    private int ProximoId()
-    {
-        lock (_lock)
+        finally
         {
-            return _proximoId++;
+            _mutex.ReleaseMutex();
         }
     }
 

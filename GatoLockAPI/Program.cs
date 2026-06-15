@@ -9,6 +9,7 @@ builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<SolicitacoesQueueService>();
 builder.Services.AddSingleton<MensagemService>();
+builder.Services.AddSingleton<GrpcMensagensGateway>();
 builder.Services.AddHostedService<ProcessamentoSolicitacoesService>();
 
 var app = builder.Build();

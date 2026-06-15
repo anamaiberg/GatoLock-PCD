@@ -10,21 +10,32 @@ public class MensagensController : ControllerBase
 {
     private readonly MensagemService _service;
     private readonly SolicitacoesQueueService _fila;
+    private readonly GrpcMensagensGateway _grpcGateway;
 
     public MensagensController(
         MensagemService service,
-        SolicitacoesQueueService fila)
+        SolicitacoesQueueService fila,
+        GrpcMensagensGateway grpcGateway)
     {
         _service = service;
         _fila = fila;
+        _grpcGateway = grpcGateway;
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok(
-            _service.ObterTodas()
-        );
+        var mensagens = await _grpcGateway.ObterTodasViaGrpcAsync();
+
+        return Ok(mensagens);
+    }
+
+    [HttpGet("grpc")]
+    public async Task<IActionResult> GetViaGrpc()
+    {
+        var mensagens = await _grpcGateway.ObterTodasViaGrpcAsync();
+
+        return Ok(mensagens);
     }
 
     [HttpGet("fila")]
@@ -34,17 +45,16 @@ public class MensagensController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Post(
+    public async Task<IActionResult> Post(
         [FromBody] Mensagem mensagem)
     {
-        var solicitacao = _service.Adicionar(mensagem);
+        var resposta = await _grpcGateway.EnfileirarViaGrpcAsync(mensagem);
 
         return Accepted(new
         {
             sucesso = true,
-            mensagem = "Mensagem enfileirada!",
-            id = solicitacao.Id,
-            status = solicitacao.Status.ToString()
+            mensagem = resposta.Mensagem,
+            status = "NaFila"
         });
     }
 }
