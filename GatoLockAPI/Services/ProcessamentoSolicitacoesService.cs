@@ -31,7 +31,7 @@ public class ProcessamentoSolicitacoesService : BackgroundService
                 solicitacao,
                 stoppingToken);
 
-            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
 
             _fila.Concluir(solicitacao);
             _mensagens.RegistrarConcluida(solicitacao);

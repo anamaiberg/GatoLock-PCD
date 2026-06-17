@@ -4,21 +4,21 @@ const gatos = [
     nome: "Virgil",
     idade: "2 anos",
     descricao: "Muito carinhoso e dorminhoco.",
-    imagem: "assets/imagens/virgil.jpg"
+    imagem: "assets/imagens/virgil.jpeg"
   },
   {
     id: 2,
     nome: "Nyx",
     idade: "1 ano",
     descricao: "Brincalhona e cheia de energia.",
-    imagem: "assets/imagens/nyx.jpg"
+    imagem: "assets/imagens/nyx.jpeg"
   },
   {
     id: 3,
     nome: "De Selby",
     idade: "3 anos",
     descricao: "Calmo, observador e amoroso.",
-    imagem: "assets/imagens/deSelby.jpg"
+    imagem: "assets/imagens/deSelby.jpeg"
   }
 ];
 
@@ -147,7 +147,9 @@ form.addEventListener(
       const json =
         await resposta.json();
 
-
+      document.getElementById(
+        "grpc-status"
+      ).innerHTML = "✅ Requisição enviada via Gateway gRPC";
 
       carregarFila();
 
