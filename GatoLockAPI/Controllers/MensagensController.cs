@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GatoLockAPI.Models;
 using GatoLockAPI.Services;
+using Grpc.Core;
 
 namespace GatoLockAPI.Controllers;
 
@@ -25,9 +26,16 @@ public class MensagensController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var mensagens = await _grpcGateway.ObterTodasViaGrpcAsync();
+        try
+        {
+            var mensagens = await _grpcGateway.ObterTodasViaGrpcAsync();
 
-        return Ok(mensagens);
+            return Ok(mensagens);
+        }
+        catch (RpcException)
+        {
+            return Ok(_service.ObterTodas());
+        }
     }
 
     [HttpGet("grpc")]
@@ -48,13 +56,28 @@ public class MensagensController : ControllerBase
     public async Task<IActionResult> Post(
         [FromBody] Mensagem mensagem)
     {
-        var resposta = await _grpcGateway.EnfileirarViaGrpcAsync(mensagem);
-
-        return Accepted(new
+        try
         {
-            sucesso = true,
-            mensagem = resposta.Mensagem,
-            status = "NaFila"
-        });
+            var resposta = await _grpcGateway.EnfileirarViaGrpcAsync(mensagem);
+
+            return Accepted(new
+            {
+                sucesso = true,
+                mensagem = resposta.Mensagem,
+                status = "NaFila"
+            });
+        }
+        catch (RpcException)
+        {
+            var solicitacao = _service.Adicionar(mensagem);
+
+            return Accepted(new
+            {
+                sucesso = true,
+                mensagem = "Mensagem enfileirada (fallback local por incompatibilidade HTTP/2).",
+                id = solicitacao.Id,
+                status = solicitacao.Status.ToString()
+            });
+        }
     }
 }
